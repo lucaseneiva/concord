@@ -1,0 +1,72 @@
+@startuml
+
+' ENTIDADES
+
+!theme plain
+hide circle
+skinparam linetype ortho
+left to right direction
+skinparam nodesep 120
+skinparam ranksep 140
+
+entity "users" as users {
+  *id : UUID <<PK>>
+  --
+  *username : VARCHAR
+  *email : VARCHAR
+  *password_hash : VARCHAR
+  created_at : TIMESTAMP
+}
+
+entity "servers" as servers {
+  *id : UUID <<PK>>
+  --
+  *name : VARCHAR
+  *owner_id : UUID <<FK>>
+  invite_code : VARCHAR
+  created_at : TIMESTAMP
+}
+
+entity "server_members" as server_members {
+  *server_id : UUID <<PK, FK>>
+  *user_id : UUID <<PK, FK>>
+  --
+  joined_at : TIMESTAMP
+}
+
+entity "channels" as channels {
+  *id : UUID <<PK>>
+  --
+  *server_id : UUID <<FK>>
+  *name : VARCHAR
+  created_at : TIMESTAMP
+}
+
+entity "messages" as messages {
+  *id : UUID <<PK>>
+  --
+  *channel_id : UUID <<FK>>
+  *author_id : UUID <<FK>>
+  *content : TEXT
+  created_at : TIMESTAMP
+}
+
+' RELACIONAMENTOS
+
+' Um usuário pode criar vários servidores (Dono)
+users ||..o{ servers : "owns"
+
+' Relacionamento N:N (Muitos para Muitos) entre users e servers
+users ||..o{ server_members : "joins"
+servers ||..o{ server_members : "has members"
+
+' Um servidor tem vários canais
+servers ||--o{ channels : "contains"
+
+' Um canal tem várias mensagens
+channels ||--o{ messages : "contains"
+
+' Uma mensagem é escrita por um usuário
+users ||..o{ messages : "writes"
+
+@enduml
