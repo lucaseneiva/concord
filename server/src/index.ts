@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 
 const app = express();
@@ -32,8 +31,6 @@ app.get("/", (req, res) => {
 });
 
 const port = process.env.PORT || 3001;
-
-connectDB();
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

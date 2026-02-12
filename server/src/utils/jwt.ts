@@ -6,7 +6,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-producti
 export const generateToken = (user: Omit<User, "password_hash">): string => {
   return jwt.sign(
     { 
-      userId: user._id.toString(), 
+      userId: user.id.toString(), 
       email: user.email 
     },
     JWT_SECRET,

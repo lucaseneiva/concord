@@ -1,17 +1,18 @@
 version: '3.8'
 
 services:
-  mongodb:
-    image: mongo:latest
-    container_name: application_mongo_db
+  postgres:
+    image: postgres:15-alpine
+    container_name: bubinga_postgres
     restart: always
     ports:
-      - "27017:27017"
+      - "5432:5432"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password123
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: bubingachat
     volumes:
-      - mongo-data:/data/db
+      - postgres-data:/var/lib/postgresql/data
 
 volumes:
-  mongo-data:
+  postgres-data:

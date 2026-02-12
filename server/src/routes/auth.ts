@@ -1,5 +1,5 @@
 import { Router, type Response } from "express";
-import User from "../models/User.js";
+import { prisma } from "../config/db.js";
 import { generateToken } from "../utils/jwt.js";
 import { hashPassword, comparePassword } from "../utils/password.js";
 import { validateRequest, registerSchema, loginSchema } from "../middleware/validation.js";
@@ -11,36 +11,24 @@ router.post("/register", validateRequest(registerSchema), async (req: AuthReques
   try {
     const { username, email, password } = req.body;
 
-    const existingUser = await User.findOne({
-      $or: [{ email }, { username }],
-    });
-
-    if (existingUser) {
-      res.status(400).json({
-        success: false,
-        error: "User with this email or username already exists",
-      });
-      return;
-    }
-
     const password_hash = await hashPassword(password);
 
-    const user = new User({
-      username,
-      email,
-      password_hash,
+    const user = await prisma.user.create({
+      data: {
+        username,
+        email,
+        password_hash,
+      },
     });
 
-    await user.save();
-
     const userResponse = {
-      _id: user._id.toString(),
+      id: user.id,
       username: user.username,
       email: user.email,
       created_at: user.created_at,
     };
 
-    const token = generateToken(userResponse);
+    const token = generateToken(userResponse as any);
 
     res.status(201).json({
       success: true,
@@ -50,6 +38,7 @@ router.post("/register", validateRequest(registerSchema), async (req: AuthReques
       },
     });
   } catch (error) {
+    // Prisma unique constraint violation code
     console.error("Registration error:", error);
     res.status(500).json({
       success: false,
@@ -62,7 +51,10 @@ router.post("/login", validateRequest(loginSchema), async (req: AuthRequest, res
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
     if (!user) {
       res.status(401).json({
         success: false,
@@ -81,13 +73,13 @@ router.post("/login", validateRequest(loginSchema), async (req: AuthRequest, res
     }
 
     const userResponse = {
-      _id: user._id.toString(),
+      id: user.id,
       username: user.username,
       email: user.email,
       created_at: user.created_at,
     };
 
-    const token = generateToken(userResponse);
+    const token = generateToken(userResponse as any);
 
     res.status(200).json({
       success: true,
@@ -107,7 +99,9 @@ router.post("/login", validateRequest(loginSchema), async (req: AuthRequest, res
 
 router.get("/me", authenticate, async (req: AuthRequest, res: Response) => {
   try {
-    const user = await User.findById(req.user?.userId).select("-password_hash");
+    const user = await prisma.user.findUnique({
+      where: { id: req.user?.userId || "" },
+    });
     
     if (!user) {
       res.status(404).json({
@@ -117,9 +111,12 @@ router.get("/me", authenticate, async (req: AuthRequest, res: Response) => {
       return;
     }
 
+    // Exclude password_hash
+    const { password_hash, ...userWithoutPassword } = user;
+
     res.status(200).json({
       success: true,
-      data: { user },
+      data: { user: userWithoutPassword },
     });
   } catch (error) {
     console.error("Get user error:", error);

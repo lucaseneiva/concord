@@ -34,7 +34,7 @@ export const Dashboard: React.FC = () => {
               </div>
               <div>
                 <span className="font-medium text-gray-700">User ID:</span>
-                <span className="ml-2 text-gray-600">{user?._id}</span>
+                <span className="ml-2 text-gray-600">{user?.id}</span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Member since:</span>

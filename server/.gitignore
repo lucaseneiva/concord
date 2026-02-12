@@ -2,3 +2,5 @@ node_modules
 dist
 repomix-output.xml
 .env
+
+/generated/prisma
