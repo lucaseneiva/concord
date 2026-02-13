@@ -6,35 +6,24 @@ import rateLimit from 'express-rate-limit';
 import authRoutes from './routes/auth.routes.js';
 import { errorMiddleware } from './middleware/error.middleware.js';
 
-const app = express();
-
 dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { success: false, error: 'Too many requests, please try again later.' },
+});
 
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: {
-    success: false,
-    error: "Too many requests from this IP, please try again later.",
-  },
-});
-
 app.use('/api', limiter);
 
+app.get('/', (_req, res) => res.send('BubingaChat API'));
 app.use('/api/auth', authRoutes);
-
 app.use(errorMiddleware);
 
-app.get("/", (req, res) => {
-    res.send("Concord API - Discord-like application");
-});
-
-const port = process.env.PORT || 3001;
-
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
-});
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
