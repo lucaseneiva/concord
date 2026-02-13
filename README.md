@@ -16,7 +16,9 @@
   <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" />
   <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
   <img src="https://img.shields.io/badge/Prisma-000000?style=for-the-badge&logo=prisma&logoColor=white" />
-  
+  <img src="https://img.shields.io/badge/Zod-000000?style=for-the-badge&logo=zod&logoColor=white" />
+  <img src="https://img.shields.io/badge/Axios-000000?style=for-the-badge&logo=axios&logoColor=white" />
+  <img src="https://img.shields.io/badge/Zustand-000000?style=for-the-badge&logo=zustand&logoColor=white" />
 </div>
 
 <br />
