@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import authRoutes from './routes/auth.js';
+import authRoutes from './routes/auth.routes.js';
 
 const app = express();
 
