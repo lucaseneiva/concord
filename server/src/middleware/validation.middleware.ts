@@ -6,11 +6,12 @@ export const validateRequest = (schema: z.ZodSchema) => {
     const result = schema.safeParse(req.body);
 
     if (!result.success) {
-      const errorMessage = result.error;
-      
       res.status(400).json({
         success: false,
-        error: Error,
+        error: result.error.issues.map((e) => ({
+          field: e.path.join("."),
+          message: e.message,
+        })),
       });
       return;
     }
