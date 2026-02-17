@@ -1,31 +1,22 @@
-@startuml usecase
+@startuml usecase_simplificado
 
 left to right direction
 
-actor "Authenticated User" as user
-actor "Server Owner" as owner
-actor "Guest" as guest
+actor "Usuário" as user
+actor "Visitante" as guest
 
-owner --|> user
-
-rectangle "Application" {
-    usecase "Register" as UC0
-    usecase "Login" as UC1
-    usecase "Manage Servers" as UC2
-    usecase "Manage Channels" as UC3
-    usecase "Send & Read Messages" as UC4
-    usecase "Invite Members" as UC5
-    usecase "Join Servers" as UC6
+rectangle "Team Communicator" {
+    usecase "Cadastrar/Login" as UC1
+    usecase "Criar Canal (Grupo)" as UC2
+    usecase "Enviar Mensagem" as UC3
+    usecase "Iniciar Conversa Direta" as UC4
+    usecase "Listar Membros" as UC5
 }
 
-user --> UC4
-user --> UC6
-
-guest --> UC0
 guest --> UC1
-
-owner --> UC2
-owner --> UC3
-owner --> UC5
+user --> UC2
+user --> UC3
+user --> UC4
+user --> UC5
 
 @enduml

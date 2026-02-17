@@ -1,6 +1,4 @@
-@startuml der
-
-' ENTIDADES
+@startuml der_simplificado
 
 !theme plain
 hide circle
@@ -15,58 +13,36 @@ entity "users" as users {
   *username : VARCHAR
   *email : VARCHAR
   *password_hash : VARCHAR
-  created_at : TIMESTAMP
+  avatar_url : VARCHAR
 }
 
-entity "servers" as servers {
+entity "rooms" as rooms {
   *id : UUID <<PK>>
   --
-  *name : VARCHAR
-  *owner_id : UUID <<FK>>
-  invite_code : VARCHAR
+  name : VARCHAR (null para DMs)
+  is_group : BOOLEAN (true=canal, false=DM)
   created_at : TIMESTAMP
 }
 
-entity "server_members" as server_members {
-  *server_id : UUID <<PK, FK>>
+entity "room_members" as room_members {
+  *room_id : UUID <<PK, FK>>
   *user_id : UUID <<PK, FK>>
   --
   joined_at : TIMESTAMP
 }
 
-entity "channels" as channels {
-  *id : UUID <<PK>>
-  --
-  *server_id : UUID <<FK>>
-  *name : VARCHAR
-  created_at : TIMESTAMP
-}
-
 entity "messages" as messages {
   *id : UUID <<PK>>
   --
-  *channel_id : UUID <<FK>>
-  *author_id : UUID <<FK>>
+  *room_id : UUID <<FK>>
+  *user_id : UUID <<FK>>
   *content : TEXT
   created_at : TIMESTAMP
 }
 
-' RELACIONAMENTOS
-
-' Um usuário pode criar vários servidores (Dono)
-users ||..o{ servers : "owns"
-
-' Relacionamento N:N (Muitos para Muitos) entre users e servers
-users ||..o{ server_members : "joins"
-servers ||..o{ server_members : "has members"
-
-' Um servidor tem vários canais
-servers ||--o{ channels : "contains"
-
-' Um canal tem várias mensagens
-channels ||--o{ messages : "contains"
-
-' Uma mensagem é escrita por um usuário
-users ||..o{ messages : "writes"
+users ||..o{ room_members : "participa"
+rooms ||..o{ room_members : "tem"
+rooms ||--o{ messages : "contêm"
+users ||--o{ messages : "envia"
 
 @enduml
