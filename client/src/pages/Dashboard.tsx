@@ -10,7 +10,7 @@ const SOCKET_URL = 'http://localhost:3001';
 export const Dashboard: React.FC = () => {
   const { user, token, logout } = useAuthStore();
   const [socket, setSocket] = useState<Socket | null>(null);
-  
+
   const [rooms, setRooms] = useState<Room[]>([]);
   const [currentRoom, setCurrentRoom] = useState<Room | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -81,16 +81,16 @@ export const Dashboard: React.FC = () => {
     setCurrentRoom(room);
 
     try {
-        await roomService.joinRoom(room.id);
-        
-        const history = await roomService.getMessages(room.id);
-        setMessages(history);
+      await roomService.joinRoom(room.id);
 
-        if (socket) {
-            socket.emit('join_room', room.id);
-        }
+      const history = await roomService.getMessages(room.id);
+      setMessages(history);
+
+      if (socket) {
+        socket.emit('join_room', room.id);
+      }
     } catch (error) {
-        console.error("Failed to join room", error);
+      console.error("Failed to join room", error);
     }
   };
 
@@ -109,11 +109,11 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="h-screen flex flex-col bg-background-secondary">
       <header className="bg-white border-b border-border px-6 py-4 flex justify-between items-center">
-        
-         <img 
-    src="logo.png" 
-    alt="BubingaChat logo"
-    className="h-16 w-auto object-contain"/>
+
+        <img
+          src="logo.png"
+          alt="BubingaChat logo"
+          className="h-16 w-auto object-contain" />
         <div className="flex items-center gap-4">
           <span className="text-sm text-text-secondary">User: <b className="text-text-primary">{user?.username}</b></span>
           <Button onClick={logout} variant="secondary" className="py-2 px-4 text-sm">Logout</Button>
@@ -128,24 +128,24 @@ export const Dashboard: React.FC = () => {
               <input
                 type="text"
                 placeholder="New Room..."
-                className="flex-1 px-3 py-2 text-sm border border-border-light rounded-input focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="flex-1 min-w-0 px-3 py-2 text-sm border border-border-light rounded-input focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 value={newRoomName}
                 onChange={(e) => setNewRoomName(e.target.value)}
               />
+
               <button type="submit" className="bg-primary text-white px-3 rounded-btn hover:bg-primary-hover transition-colors">+</button>
             </form>
           </div>
-          
+
           <div className="flex-1 overflow-y-auto p-2 space-y-1">
             {rooms.map(room => (
               <button
                 key={room.id}
                 onClick={() => handleJoinRoom(room)}
-                className={`w-full text-left px-4 py-2.5 rounded-input transition-all ${
-                  currentRoom?.id === room.id 
-                    ? 'bg-primary text-white' 
+                className={`w-full text-left px-4 py-2.5 rounded-input transition-all ${currentRoom?.id === room.id
+                    ? 'bg-primary text-white'
                     : 'text-text-primary hover:bg-background-secondary'
-                }`}
+                  }`}
               >
                 # {room.name}
               </button>
@@ -166,9 +166,8 @@ export const Dashboard: React.FC = () => {
                   const isMe = msg.user.id === user?.id;
                   return (
                     <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[70%] rounded-btn px-4 py-3 ${
-                        isMe ? 'bg-primary text-white' : 'bg-background-secondary text-text-primary'
-                      }`}>
+                      <div className={`max-w-[70%] rounded-btn px-4 py-3 ${isMe ? 'bg-primary text-white' : 'bg-background-secondary text-text-primary'
+                        }`}>
                         {!isMe && (
                           <div className="text-xs font-medium text-text-secondary mb-1">
                             {msg.user.username}
@@ -176,7 +175,7 @@ export const Dashboard: React.FC = () => {
                         )}
                         <p className="whitespace-pre-wrap break-words">{msg.content}</p>
                         <div className={`text-[10px] mt-1.5 ${isMe ? 'text-primary-light' : 'text-text-secondary'}`}>
-                          {new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                          {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </div>
                       </div>
                     </div>
@@ -187,7 +186,7 @@ export const Dashboard: React.FC = () => {
 
               <div className="p-4 border-t border-border bg-background-secondary">
                 <form onSubmit={handleSendMessage} className="flex gap-3">
-                  <Input 
+                  <Input
                     name="message"
                     value={inputText}
                     onChange={setInputText}
